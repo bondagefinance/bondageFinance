@@ -166,6 +166,7 @@ contract BondageFinance is ReentrancyGuard {
 
     uint256 public constant BOT_FEE_BASIS_POINTS = 500; // 5%
     uint256 public constant PROTOCOL_FEE_BASIS_POINTS = 500; // 5%
+    uint256 public constant SLIPPAGE_MAXIMUM = 2000;
 
     struct Pool {
         uint256 balance; // ETH balance of pool
@@ -229,6 +230,10 @@ contract BondageFinance is ReentrancyGuard {
         poolToBToken[token] = newBToken;
 
         IERC20(token).approve(address(uniswapRouter), type(uint256).max);
+
+        if(slippage > SLIPPAGE_MAXIMUM){
+            slippage = SLIPPAGE_MAXIMUM;
+        }
 
         pools[token] = Pool({
             balance: 0,
@@ -394,6 +399,10 @@ contract BondageFinance is ReentrancyGuard {
         require(proposerBalance > 0, "Not a bToken holder");
 
         uint256 currentProposalId = proposalCount; // Store the current proposal ID
+
+        if(newSlippage > SLIPPAGE_MAXIMUM){
+            newSlippage = SLIPPAGE_MAXIMUM;
+        }
 
         Proposal memory newProposal = Proposal({
             poolToken: poolToken,
