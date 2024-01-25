@@ -231,8 +231,8 @@ contract BondageFinance is ReentrancyGuard {
 
         IERC20(token).approve(address(uniswapRouter), type(uint256).max);
 
-        if(slippage > SLIPPAGE_MAXIMUM){
-            slippage = SLIPPAGE_MAXIMUM;
+        if(slippage > SLIPPAGE_MAXIMUM_BASIS_POINTS){
+            slippage = SLIPPAGE_MAXIMUM_BASIS_POINTS;
         }
 
         pools[token] = Pool({
@@ -400,8 +400,8 @@ contract BondageFinance is ReentrancyGuard {
 
         uint256 currentProposalId = proposalCount; // Store the current proposal ID
 
-        if(newSlippage > SLIPPAGE_MAXIMUM){
-            newSlippage = SLIPPAGE_MAXIMUM;
+        if(newSlippage > SLIPPAGE_MAXIMUM_BASIS_POINTS){
+            newSlippage = SLIPPAGE_MAXIMUM_BASIS_POINTS;
         }
 
         Proposal memory newProposal = Proposal({
