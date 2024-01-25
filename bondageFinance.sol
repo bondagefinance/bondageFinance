@@ -166,7 +166,7 @@ contract BondageFinance is ReentrancyGuard {
 
     uint256 public constant BOT_FEE_BASIS_POINTS = 500; // 5%
     uint256 public constant PROTOCOL_FEE_BASIS_POINTS = 500; // 5%
-    uint256 public constant SLIPPAGE_MAXIMUM = 2000;
+    uint256 public constant SLIPPAGE_MAXIMUM_BASIS_POINTS = 500; // 5% maximum allowable slippage
 
     struct Pool {
         uint256 balance; // ETH balance of pool
