@@ -842,10 +842,19 @@ document.getElementById('searchTokenBtn').addEventListener('click', async () => 
 async function formatPoolDetails(pool, tokenName, tokenAddress) {
     const currentTokenPrice = await fetchTokenPrice(tokenAddress);
 
+    // Retrieve token contract and decimals
+    const tokenContract = new web3.eth.Contract(bTokenABI, tokenAddress);
+    const tokenDecimals = await tokenContract.methods.decimals().call();
+    console.log(`Token Decimals for ${tokenName}: ${tokenDecimals}`);
+
+    // Format the total pooled tokens using the token's decimals
+    const totalPooledTokensFormatted = new web3.utils.BN(pool.totalPooledTokens).div(web3.utils.toBN(10).pow(web3.utils.toBN(tokenDecimals))).toString();
+    console.log(`Formatted Total Pooled Tokens: ${totalPooledTokensFormatted}`);
+
     const detailLines = [
         `Token Name: ${tokenName}`,
         `ETH Balance: ${web3.utils.fromWei(pool.balance.toString(), 'ether')}`,
-        `Total Pooled Tokens: ${web3.utils.fromWei(pool.totalPooledTokens.toString(), 'ether')}`,
+        `Total Pooled Tokens: ${totalPooledTokensFormatted}`,
         `Price To Swap At: ${web3.utils.fromWei(pool.pricePerToken.toString(), 'ether')} ETH`,
         `Current Token Price: ${currentTokenPrice} ETH`,
         `Slippage: ${pool.slippage / 100}%`,
@@ -855,6 +864,7 @@ async function formatPoolDetails(pool, tokenName, tokenAddress) {
 
     return detailLines.join('<br>');
 }
+
 
 
 const factoryV3ABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint24","name":"fee","type":"uint24"},{"indexed":true,"internalType":"int24","name":"tickSpacing","type":"int24"}],"name":"FeeAmountEnabled","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"oldOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnerChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token0","type":"address"},{"indexed":true,"internalType":"address","name":"token1","type":"address"},{"indexed":true,"internalType":"uint24","name":"fee","type":"uint24"},{"indexed":false,"internalType":"int24","name":"tickSpacing","type":"int24"},{"indexed":false,"internalType":"address","name":"pool","type":"address"}],"name":"PoolCreated","type":"event"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint24","name":"fee","type":"uint24"}],"name":"createPool","outputs":[{"internalType":"address","name":"pool","type":"address"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint24","name":"fee","type":"uint24"},{"internalType":"int24","name":"tickSpacing","type":"int24"}],"name":"enableFeeAmount","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint24","name":"","type":"uint24"}],"name":"feeAmountTickSpacing","outputs":[{"internalType":"int24","name":"","type":"int24"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint24","name":"","type":"uint24"}],"name":"getPool","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"parameters","outputs":[{"internalType":"address","name":"factory","type":"address"},{"internalType":"address","name":"token0","type":"address"},{"internalType":"address","name":"token1","type":"address"},{"internalType":"uint24","name":"fee","type":"uint24"},{"internalType":"int24","name":"tickSpacing","type":"int24"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_owner","type":"address"}],"name":"setOwner","outputs":[],"stateMutability":"nonpayable","type":"function"}]; // Uniswap V3 Factory ABI
@@ -977,7 +987,6 @@ document.getElementById('poolTokenAddressInput').addEventListener('input', async
         initializeButton.disabled = true; // Disable the button in case of error
     }
 });
-
 document.getElementById('depositBtn').addEventListener('click', async () => {
     const tokenAddress = document.getElementById('tokenAddressInput').value.trim();
 
@@ -997,9 +1006,11 @@ document.getElementById('depositBtn').addEventListener('click', async () => {
         // Retrieve token contract and decimals
         const tokenContract = new web3.eth.Contract(bTokenABI, tokenAddress);
         const tokenDecimals = await tokenContract.methods.decimals().call();
+        console.log(`Token Decimals: ${tokenDecimals}`);
 
-        // Convert deposit amount to the correct unit based on token decimals
-        const amountInTokenUnit = web3.utils.toBN(web3.utils.toWei(depositAmount, 'ether')).mul(web3.utils.toBN(10).pow(web3.utils.toBN(tokenDecimals - 18)));
+        // Correctly calculate the amount in token unit
+        const amountInTokenUnit = new web3.utils.BN(depositAmount).mul(web3.utils.toBN(10).pow(web3.utils.toBN(tokenDecimals)));
+        console.log(`Amount in Token Unit: ${amountInTokenUnit.toString()}`);
 
         const accounts = await web3.eth.getAccounts();
         // Call the depositTokens function with the token address and amount in token unit
@@ -1007,10 +1018,11 @@ document.getElementById('depositBtn').addEventListener('click', async () => {
 
         alert(`Successfully deposited ${depositAmount} tokens.`);
     } catch (error) {
-        console.error(error);
+        console.error('Error depositing tokens:', error);
         alert('Error depositing tokens');
     }
 });
+
 
 
 document.getElementById('withdrawBtn').addEventListener('click', async () => {
@@ -1407,20 +1419,36 @@ document.getElementById('darkModeToggle').addEventListener('click', function() {
 // Approval button event listener
 document.getElementById('approveButton').addEventListener('click', async () => {
     const tokenAddress = document.getElementById('tokenAddressInput').value.trim();
-    const tokenContract = new web3.eth.Contract(bTokenABI, tokenAddress);
     const depositAmount = document.getElementById('depositAmount').value;
-    const tokenDecimals = await tokenContract.methods.decimals().call();
-    const amountInTokenUnit = web3.utils.toBN(depositAmount).mul(web3.utils.toBN(10).pow(web3.utils.toBN(tokenDecimals)));
+
+    if (!web3.utils.isAddress(tokenAddress)) {
+        alert('Invalid token address');
+        return;
+    }
+
+    if (isNaN(depositAmount) || depositAmount <= 0) {
+        alert('Invalid deposit amount');
+        return;
+    }
 
     try {
+        const tokenContract = new web3.eth.Contract(bTokenABI, tokenAddress);
+        const tokenDecimals = await tokenContract.methods.decimals().call();
+
+        // Use BigNumber for arithmetic operations
+        const amountInTokenUnit = new web3.utils.BN(depositAmount).mul(new web3.utils.BN(10).pow(new web3.utils.BN(tokenDecimals)));
+
         const userAddress = (await web3.eth.getAccounts())[0];
         await tokenContract.methods.approve(bondageFinanceContract._address, amountInTokenUnit.toString()).send({ from: userAddress });
+
         alert('Approval successful');
     } catch (error) {
-        console.error(error);
+        console.error('Error during approval:', error);
         alert('Error during approval');
     }
 });
+
+
 
 document.getElementById('depositAmount').addEventListener('input', async function() {
     const depositAmount = this.value.trim();
