@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bondage Finance Interface</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.3/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbi/dist/jsbi-umd.min.js"></script>
+    <link href="styles.css" rel="stylesheet">
+
+</head>
+<body class="bg-gray-100">
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="docs.html">Docs</a></li>
+                <li><a href="https://twitter.com/bondagefi" target="_blank">Twitter</a></li>
+                <!-- Add other navigation links if needed -->
+            </ul>
+        </nav>
+    </header>
+        <!-- Dark mode toggle button -->
+        <div style="position: absolute; top: 10px; right: 10px;">
+            <img id="darkModeToggle" src="sun-icon.png" alt="Toggle Dark Mode" style="cursor: pointer; width: 30px; height: 30px;">
+        </div>
+    <br>
+    <div class="container mx-auto p-4">
+        <h1 class="text-2xl font-bold text-center mb-6">Bondage Finance</h1>
+
+            <!-- Search Bar -->
+        <div class="mb-6">
+            <input type="text" id="tokenAddressInput" placeholder="Enter Token Contract Address" class="border p-2 rounded w-full">
+            <button id="searchTokenBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2">Search</button>
+            <span id="noPoolMessage" class="text-red-500" style="display: none;"></span>
+
+            <!-- User's Token Balance and Approved Amount -->
+            <p id="userBalance" class="text-green-600 mt-2"></p> <!-- New line for user balance -->
+            <p id="approvedAmount" class="text-green-600"></p> <!-- New line for approved amount -->
+            
+        </div>
+
+        <!-- Pool Information -->
+        <div id="poolInfo" class="mb-6 relative">
+            <h2 class="text-lg font-semibold">Pool Information</h2>
+            <p id="poolDetails">Loading...</p>
+            <p id="bTokenDetails"></p>
+            <br>
+            <!-- Deposit and Withdraw Buttons -->
+            <input type="number" id="depositAmount" placeholder="Enter Amount of tokens to deposit" class="border p-2 rounded mt-2">
+            <button id="depositBtn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2">Deposit Tokens</button>
+            <!-- Approval Button -->
+            <button id="approveButton" class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded mt-2" style="display: none;">Approve</button> <!-- New approval button -->
+            <button id="withdrawBtn" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-2">Withdraw Tokens</button>
+            <!-- Swap Tokens for ETH -->
+            <input type="number" id="swapAmount" placeholder="Amount to Swap" class="border p-2 rounded mt-2">
+            <button id="swapBtn" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mt-2">Swap Tokens for ETH</button>
+            <div class="container mx-auto p-4">
+
+            <!-- Create Proposal Section -->
+            <div id="createProposalSection" class="hidden">
+                <h3 class="text-lg font-semibold">Create Proposal</h3>
+                <input type="number" id="proposalSlippageInput" placeholder="Enter Slippage" class="border p-2 rounded w-full mt-2">
+                <span id="slippageError" class="text-red-500"></span>     
+                <input type="text" id="proposalPriceInput" placeholder="Enter Price Per Token" class="border p-2 rounded w-full mt-2">
+                <div>
+                    <button id="proposalPriceMultiple1" class="proposal-multiplier-button hidden bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-2">2x Price</button>
+                    <button id="proposalPriceMultiple2" class="proposal-multiplier-button hidden bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-2">5x Price</button>
+                    <button id="proposalPriceMultiple3" class="proposal-multiplier-button hidden bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-2">10x Price</button>
+                </div>
+                <input type="checkbox" id="proposalHappyEndingInput"> Enable Happy Ending<br>
+                <button id="createProposalBtn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2">Create Proposal</button>
+            </div>
+            </div>
+        </div>
+
+            <!-- Active Proposals -->
+            <div id="activeProposals" class="mb-6 hidden">
+                <h2 class="text-lg font-semibold">Active Proposals</h2>
+                <div id="proposalsList">Loading...</div>
+            </div>
+
+    </div>
+    <br>
+    <br>
+            <!-- Initialize Pool -->
+            <div class="container mx-auto p-4">
+                <h2 class="text-lg font-semibold">Initialize New Pool</h2>
+                <!-- Pool Initialization Inputs -->
+                <input type="text" id="poolTokenAddressInput" placeholder="Enter Pool Token Contract Address" class="border p-2 rounded w-full mt-2">
+                <span id="poolExistenceMessage" class="text-red-500"></span>
+                <input type="text" id="pricePerTokenInput" placeholder="Enter Price Per Token" class="border p-2 rounded w-full mt-2">
+                <div>
+                    <button id="priceMultiple1" class="multiplier-button hidden bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-2">2x Price</button>
+                    <button id="priceMultiple2" class="multiplier-button hidden bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-2">5x Price</button>
+                    <button id="priceMultiple3" class="multiplier-button hidden bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-2">10x Price</button>
+                </div>
+                <input type="text" id="slippageInput" placeholder="Enter Slippage (e.g., 1%)" class="border p-2 rounded w-full mt-2">
+                <span id="slippageWarning" class="text-red-500"></span>
+                <button id="initializePoolBtn" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mt-2">Initialize Pool</button>
+            </div>
+            <div class="image-container" style="display: flex; justify-content: center; align-items: center;">
+                <img src="bondageMascot2.png" alt="Bondage Mascot" style="max-width: 100%; max-height: 100%;" />
+            </div>
+    <!-- JavaScript (Web3.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.3/dist/web3.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

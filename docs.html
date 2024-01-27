@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BondageFinance Documentation</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Ensure this is the correct path to your CSS file -->
+    <style>
+        /* Add CSS styles for centering text here */
+        .container {
+            text-align: center;
+        }
+        section {
+            text-align: center;
+            display: inline-block;
+            width: 100%;
+        }
+        ul {
+            list-style: none; /* Remove bullet points from lists */
+            padding: 0; /* Remove default padding */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+ <li><a href="index.html">Home</a></li>
+ <li><a href="docs.html">Docs</a></li>
+ <li><a href="https://twitter.com/bondagefi" target="_blank">Twitter</a></li>
+ <!-- Add other navigation links if needed -->
+            </ul>
+        </nav>
+    </header>
+    <main class="container"> 
+<strong>        <h1>BondageFinance:</strong>Documentation</h1>
+        <section>
+            <h2>Overview</h2>
+            <p>BondageFinance is a DeFi platform that enables users to participate in a community-driven token holding ecosystem. It's designed to curb premature selling by setting a collective price threshold for token sales, fostering a more stable token economy. Users interact with the platform through a series of processes involving token deposits, governance, and eventual withdrawal.</p>
+        </section>
+        <br>
+        <section>
+            <br>
+            <h2>Key Features</h2>
+            <ul>
+<strong> <li>Token Deposit:</strong> Users deposit tokens into pools, joining a collective holding strategy.</li>
+<strong> <li>bTokens:</strong> Depositors receive bTokens representing their share and stake in the pool.</li>
+<strong> <li>Governance Participation:</strong> bToken holders can vote on pool parameters, like slippage tolerance, sale price targets, and enabling a 'happy ending' withdrawal mechanism.</li>
+<strong> <li>Swap Execution Reward:</strong> Users executing token-to-ETH swaps earn a 5% fee from the returned ETH.</li>
+<strong> <li>Happy Ending:</strong> Enables final withdrawal of tokens and ETH when the 'happy ending' flag is active, indicating the pool's closure. Deposits made 24 hours after the Happy Ending flag is set will reset it to false.</li>
+            </ul>
+        </section>
+        <br>
+        <section>
+            <br>
+            <h2>Benefits for Users</h2>
+            <ul>
+<strong> <li>Supports Price Discovery:</strong> By locking tokens, the platform helps in stabilizing prices and reducing sell-off pressure.</li>
+<strong> <li>Profit from Swaps:</strong> Users or bots executing swaps earn fees, providing an incentive for maintaining pool activity.</li>
+<strong> <li>Passive Investment Strategy:</strong> Users can adopt a 'set and forget' approach, relying on community-driven decisions.</li>
+<strong> <li>Community Empowerment:</strong> Especially beneficial for meme token communities to exert collective control over market dynamics.</li>
+            </ul>
+        </section>
+        <br>
+        <section>
+            <br>
+            <h2>Risks for Users</h2>
+            <ul>
+<strong> <li>Timing of Swaps:</strong> May not always align with individual exit strategies.</li>
+<strong> <li>Non-Execution of Swaps:</strong> If price targets aren’t met, funds might remain locked until 'happy ending' is triggered.</li>
+<strong> <li>Reduced ETH Returns:</strong> Due to fees, the net ETH returns might be slightly lower.</li>
+            </ul>
+        </section>
+        <br>
+        <section>
+            <br>
+            <h2>User Journey on BondageFinance</h2>
+            <p>Users on BondageFinance go through the following steps when interacting with the platform:</p>
+            <br>
+            <h3>Joining a Pool</h3>
+            <ul>
+                <li><strong>Select and Deposit:</strong> Users pick a token pool and deposit their tokens. Users cannot deposit for 24 hours when a Happy Ending has been triggered.</li>
+                <li><strong>Receive bTokens:</strong> Reflects their share in the pool and grants governance rights.</li>
+            </ul>
+        
+            <h3>Governance Participation</h3>
+            <ul>
+                <li><strong>Vote on Proposals:</strong> Use bTokens to vote on sale price, slippage, and 'happy ending' activation.</li>
+                <li><strong>Lock-up Mechanism:</strong> Tokens remain locked until the price target is hit or 'happy ending' is activated.</li>
+            </ul>
+        
+            <h3>Withdrawing Assets</h3>
+            <ul>
+                <li><strong>Final Withdrawal:</strong> Upon 'happy ending' activation, users withdraw their token and ETH shares.</li>
+            </ul>
+        </section>
+        <br>
+        <section>
+            <br>
+            <h2>Technical Functions Explained</h2>
+            <ul>
+                <p><strong>depositTokens:</strong> Deposit tokens into a pool, receive bTokens. This function allows users to deposit tokens into a specific pool, and in return, they receive bTokens. These bTokens represent their share in the pool and grant them governance rights.</p>
+                <br>
+                <p><strong>withdrawAssets:</strong> Withdraw proportional share of ETH and tokens when 'happy ending' is active. Users can utilize this function to withdraw their proportional share of ETH and tokens from a pool. However, it's important to note that this function can only be used when the 'happyEnding' flag is active. When 'happyEnding' is enabled, users are required to withdraw both tokens and ETH, and their entire bToken balance is burned.</p>
+                <br>
+                <p><strong>swapTokensForETH:</strong> Execute token-to-ETH swaps when price targets are met. This function allows users to swap a specified amount of pool tokens for ETH. Users provide the token they want to swap and the amount they want to exchange. The function calculates the minimum ETH output required for the swap, taking into account the pool's price per token and slippage tolerance. If the conditions are met, the swap is executed, and the pool receives the corresponding ETH in return.</p>
+                <br>
+                <p><strong>createProposal:</strong> Propose changes in pool parameters, exercisable by bToken holders. This function enables bToken holders to create governance proposals for a specific pool. Proposers can suggest changes to the pool's parameters, including the slippage tolerance, price per token, and the activation of the 'happyEnding' mechanism. Each proposal has a unique ID, and proposers must hold bTokens of the respective pool to create proposals. Proposals are subject to a voting period.</p>
+                <br>
+                <p><strong>voteOnProposal:</strong> Vote on governance proposals using bTokens. bToken holders can use this function to cast their votes on a governance proposal. They can vote either in favor (yes) or against (no) the proposed changes. Users must hold bTokens to participate in the voting process. The total number of 'yes' votes is tracked, and the proposal's outcome depends on whether a majority is achieved.</p>
+                <br>
+                <p><strong>executeProposal:</strong> Implement successful proposals after yes votes have reached over 50% of the total bToken supply. If a proposal receives a majority of 'yes' votes, this function can be used to execute the proposed changes. The slippage tolerance, price per token, and 'happyEnding' status of the pool are updated based on the proposal's parameters. The 'happyEnding' status may enable or disable the final withdrawal of assets from the pool.</p>
+                <br>
+            </ul>
+            
+        </section>
+    </main>
+    <footer>
+        <!-- Your footer content -->
+    </footer>
+</body>
+</html>
