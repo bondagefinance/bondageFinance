@@ -785,14 +785,19 @@ document.getElementById('searchTokenBtn').addEventListener('click', async () => 
         }
         
         // Detect token decimals and display token balances
+        // Detect token decimals and display token balances
         const tokenContract = new web3.eth.Contract(bTokenABI, tokenAddress);
         const tokenDecimals = await tokenContract.methods.decimals().call();
         const userAddress = (await web3.eth.getAccounts())[0];
         const userBalance = await tokenContract.methods.balanceOf(userAddress).call();
         const approvedAmount = await tokenContract.methods.allowance(userAddress, bondageFinanceContract._address).call();
 
-        document.getElementById('userBalance').innerText = `Your Balance: ${web3.utils.fromWei(userBalance, 'ether')}`;
-        document.getElementById('approvedAmount').innerText = `Approved Amount: ${web3.utils.fromWei(approvedAmount, 'ether')}`;
+        // Convert balances to human-readable format based on token decimals
+        const formattedUserBalance = new web3.utils.BN(userBalance).div(new web3.utils.BN(10).pow(new web3.utils.BN(tokenDecimals))).toString();
+        const formattedApprovedAmount = new web3.utils.BN(approvedAmount).div(new web3.utils.BN(10).pow(new web3.utils.BN(tokenDecimals))).toString();
+        document.getElementById('userBalance').innerText = `Your Balance: ${formattedUserBalance}`;
+        document.getElementById('approvedAmount').innerText = `Approved Amount: ${formattedApprovedAmount}`;
+
 
         // Enable or disable approval button based on approved amount
         const depositAmount = document.getElementById('depositAmount').value;
@@ -1505,7 +1510,8 @@ async function updatePageData() {
 
         // Update User Approved Amount
         const approvedAmount = await tokenContract.methods.allowance(userAddress, bondageFinanceContract._address).call();
-        document.getElementById('approvedAmount').innerText = `Approved Amount: ${web3.utils.fromWei(approvedAmount, 'ether')}`;
+        const formattedApprovedAmount = new web3.utils.BN(approvedAmount).div(new web3.utils.BN(10).pow(new web3.utils.BN(tokenDecimals))).toString();
+        document.getElementById('approvedAmount').innerText = `Approved Amount: ${web3.utils.fromWei(formattedApprovedAmount, 'ether')}`;
 
         // Update Pool Information
         const pool = await bondageFinanceContract.methods.pools(tokenAddress).call();
