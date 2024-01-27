@@ -5,7 +5,6 @@ if (typeof window.ethereum !== 'undefined') {
     web3 = new Web3(window.ethereum);
 }
 
-
 // Contract ABIs and Addresses
 const bondageFinanceABI = [
 	{
@@ -1207,26 +1206,35 @@ async function checkAndDisplayProposalSection(tokenAddress) {
     const userAddress = accounts[0];
 
     try {
-        // Get the bToken address for the pool token
         const bTokenAddress = await bondageFinanceContract.methods.poolToBToken(tokenAddress).call();
-        
-        // If no bToken found, hide proposal section and return
+        console.log(`bToken Address: ${bTokenAddress}`);
+
         if (!bTokenAddress || bTokenAddress === '0x0000000000000000000000000000000000000000') {
             document.getElementById('createProposalSection').classList.add('hidden');
+            console.log('No bToken found or zero address.');
             return;
         }
 
-        // Create a contract instance for the bToken
         const bTokenContract = new web3.eth.Contract(bTokenABI, bTokenAddress);
         const bTokenBalance = await bTokenContract.methods.balanceOf(userAddress).call();
+        console.log(`bToken Balance: ${bTokenBalance}`);
 
-        // Show or hide the proposal section based on bToken balance
         const proposalSection = document.getElementById('createProposalSection');
-        proposalSection.classList.toggle('hidden', bTokenBalance === '0');
+        if (bTokenBalance === '0') {
+            proposalSection.style.display = 'none'; // Directly setting display style
+            console.log('Hiding proposal section due to zero bToken balance.');
+        } else {
+            proposalSection.style.display = 'block'; // Directly setting display style
+            console.log('Showing proposal section.');
+        }        
     } catch (error) {
         console.error('Error checking bToken balance', error);
+        document.getElementById('createProposalSection').classList.add('hidden');
+        console.log('Error occurred. Hiding proposal section.');
     }
 }
+
+
 
 document.getElementById('createProposalBtn').addEventListener('click', async () => {
     const slippageInput = document.getElementById('proposalSlippageInput').value.trim();
