@@ -922,29 +922,39 @@ const quoterAddress = "0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6";
 const quoterContract = new web3.eth.Contract(quoterABI, quoterAddress);
 
 async function fetchTokenPrice(tokenAddress) {
-  const tokenIn = tokenAddress; // Your token address
-  const tokenOut = WETHAddress; // Wrapped ETH address
-  const fee = 3000; // Fee tier, e.g., 3000 for 0.3%
-  const amountIn = web3.utils.toWei('1', 'ether'); // 1 token
+    const tokenIn = tokenAddress; // Your token address
+    const tokenOut = WETHAddress; // Wrapped ETH address
+    const fee = await fetchPoolFee(tokenAddress); // Fee tier, e.g., 3000 for 0.3%
 
-  try {
-    // Get quote for 1 token to ETH
-    const amountOut = await quoterContract.methods.quoteExactInputSingle(
-      tokenIn,
-      tokenOut,
-      fee,
-      amountIn,
-      0 // sqrtPriceLimitX96
-    ).call();
+    try {
+        // Get token contract and decimals
+        const tokenContract = new web3.eth.Contract(bTokenABI, tokenIn);
+        const tokenDecimals = await tokenContract.methods.decimals().call();
+        console.log(`Token Decimals: ${tokenDecimals}`);
 
-    const pricePerTokenInEther = web3.utils.fromWei(amountOut.toString(), 'ether');
-    console.log('Price per token in ETH:', pricePerTokenInEther);
-    return pricePerTokenInEther;
-  } catch (error) {
-    console.error('Error fetching token price from Uniswap', error);
-    return null;
-  }
+        // Convert 1 token to the correct unit based on its decimals
+        const amountIn = new web3.utils.BN(10).pow(new web3.utils.BN(tokenDecimals));
+        console.log(`Amount In (in token's smallest unit): ${amountIn.toString()}`);
+
+        // Get quote for 1 token to ETH
+        const amountOut = await quoterContract.methods.quoteExactInputSingle(
+            tokenIn,
+            tokenOut,
+            fee,
+            amountIn.toString(),
+            0 // sqrtPriceLimitX96
+        ).call();
+
+        // Convert amountOut to ETH decimal format (18 decimals)
+        const pricePerTokenInEther = web3.utils.fromWei(amountOut.toString(), 'ether');
+        console.log('Price per token in ETH:', pricePerTokenInEther);
+        return pricePerTokenInEther;
+    } catch (error) {
+        console.error('Error fetching token price from Uniswap', error);
+        return null;
+    }
 }
+
 
 
 async function setPriceMultiple(multiple) {
