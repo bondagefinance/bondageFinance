@@ -4,10 +4,10 @@ let web3;
 if (typeof window.ethereum !== 'undefined') {
     web3 = new Web3(window.ethereum);
 } else {
-    web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
+    web3 = new Web3(new Web3.providers.HttpProvider('https://goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID'));
 }
 
-// Contract ABIs and Addresses (replace with actual ABIs and addresses)
+// Contract ABIs and Addresses
 const bondageFinanceABI = [
 	{
 		"inputs": [
@@ -597,6 +597,19 @@ const bondageFinanceABI = [
 	},
 	{
 		"inputs": [],
+		"name": "SLIPPAGE_MAXIMUM_BASIS_POINTS",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "uniswapRouter",
 		"outputs": [
 			{
@@ -661,7 +674,6 @@ const bTokenABI = [
         "outputs": [{"name": "", "type": "uint256"}],
         "type": "function"
     },
-    // Additional ERC20 functions
     {
         "constant": false,
         "inputs": [{"name": "_spender", "type": "address"}, {"name": "_value", "type": "uint256"}],
@@ -708,7 +720,6 @@ const bTokenABI = [
         "outputs": [{"name": "success", "type": "bool"}],
         "type": "function"
     },
-    // Added method to get token name
     {
         "constant": true,
         "inputs": [],
@@ -748,7 +759,6 @@ async function initWeb3() {
             // Initialize the contract instance
             bondageFinanceContract = new web3.eth.Contract(bondageFinanceABI, bondageFinanceAddress);
 
-            // Other initialization code...
         } catch (error) {
             console.error("User denied account access", error);
         }
@@ -845,7 +855,7 @@ async function formatPoolDetails(pool, tokenName, tokenAddress) {
         `Last Happy Ending Timestamp: ${new Date(pool.happyEndingTimestamp * 1000).toLocaleString()}`
     ];
 
-    return detailLines.join('<br>'); // Join lines with HTML break
+    return detailLines.join('<br>');
 }
 
 
@@ -1083,7 +1093,7 @@ document.getElementById('initializePoolBtn').addEventListener('click', async () 
         await bondageFinanceContract.methods.initializePool(
             poolTokenAddress,
             poolFee.toString(), // Convert poolFee to string
-            web3.utils.toWei(pricePerToken, 'ether'), // Assuming pricePerToken is entered in ether units
+            web3.utils.toWei(pricePerToken, 'ether'),
             slippageBasisPoints // Convert slippageBasisPoints to string
             ).send({ from: accounts[0] });
     
@@ -1223,7 +1233,7 @@ document.getElementById('createProposalBtn').addEventListener('click', async () 
     const slippageInput = document.getElementById('proposalSlippageInput').value.trim();
     const priceInput = document.getElementById('proposalPriceInput').value.trim();
     const happyEndingInput = document.getElementById('proposalHappyEndingInput').checked;
-    const tokenAddress = document.getElementById('tokenAddressInput').value.trim(); // Assuming this is the pool token address
+    const tokenAddress = document.getElementById('tokenAddressInput').value.trim();
 
     if (!web3.utils.isAddress(tokenAddress)) {
         alert('Invalid Pool Token address');
@@ -1249,7 +1259,7 @@ document.getElementById('createProposalBtn').addEventListener('click', async () 
         await bondageFinanceContract.methods.createProposal(
             tokenAddress,
             slippageBasisPoints, // Convert slippageInput to string
-            web3.utils.toWei(priceInput, 'ether'), // Assuming priceInput is entered in ether units
+            web3.utils.toWei(priceInput, 'ether'),
             happyEndingInput
         ).send({ from: accounts[0] });
 
@@ -1271,7 +1281,6 @@ async function fetchAndDisplayProposals(tokenAddress) {
             
             // Check if the proposal is related to the token and either not executed or the deadline has not passed
             if (proposal.poolToken.toLowerCase() === tokenAddress.toLowerCase() && (!proposal.executed && currentTime < proposal.deadline)) {
-                // Fetch additional data here
                 const newSlippage = proposal.newSlippage;
                 const newPricePerTokenInEther = web3.utils.fromWei(proposal.newPricePerToken, 'ether');
                 const yesVotesInEther = web3.utils.fromWei(proposal.yesVotes, 'ether');
@@ -1380,11 +1389,11 @@ document.getElementById('darkModeToggle').addEventListener('click', function() {
     document.body.classList.toggle('dark-mode');
     const mascotImage = document.querySelector('img[alt="Bondage Mascot"]');
     if (mascotImage.src.includes('bondageMascotDark.png')) {
-        mascotImage.src = 'bondageMascot2.png'; // Replace with light mode image
-        this.src = 'sun-icon.png'; // Replace with sun icon
+        mascotImage.src = 'bondageMascot2.png'; 
+        this.src = 'sun-icon.png';
     } else {
-        mascotImage.src = 'bondageMascotDark.png'; // Replace with dark mode image
-        this.src = 'moon-icon.png'; // Replace with moon icon
+        mascotImage.src = 'bondageMascotDark.png';
+        this.src = 'moon-icon.png';
     }
 });
 
@@ -1466,11 +1475,9 @@ async function updatePageData() {
         document.getElementById('depositBtn').disabled = !isApprovedForDeposit || pool.happyEnding;
         document.getElementById('withdrawBtn').disabled = !pool.happyEnding;
         document.getElementById('swapBtn').disabled = parseFloat(approvedAmount) === 0 || pool.happyEnding;
-        // Add more button state updates as needed
 
     } catch (error) {
         console.error('Error updating page data:', error);
-        // Optionally handle errors, e.g., by displaying an error message
     }
 }
 
