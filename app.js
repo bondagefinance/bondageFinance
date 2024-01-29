@@ -1419,7 +1419,20 @@ document.getElementById('proposalPriceInput').addEventListener('blur', function(
     });
 });
 
+
 document.getElementById('darkModeToggle').addEventListener('click', function() {
+    document.body.classList.toggle('dark-mode');
+    const mascotImage = document.querySelector('img[alt="Bondage Mascot"]');
+    if (mascotImage.src.includes('bondageMascotDark.png')) {
+        mascotImage.src = 'bondageMascot2.png'; 
+        this.src = 'sun-icon.png';
+    } else {
+        mascotImage.src = 'bondageMascotDark.png';
+        this.src = 'moon-icon.png';
+    }
+});
+
+document.getElementById('darkModeToggle').addEventListener('touch', function() {
     document.body.classList.toggle('dark-mode');
     const mascotImage = document.querySelector('img[alt="Bondage Mascot"]');
     if (mascotImage.src.includes('bondageMascotDark.png')) {
