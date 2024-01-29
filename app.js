@@ -735,6 +735,10 @@ const bTokenABI = [
 ];
 
 
+document.addEventListener('DOMContentLoaded', () => {
+    initWeb3();
+});
+
 const bondageFinanceAddress = '0x54359A7B7bBE47024D6C2a643F18f8DD623064D0'; //Goerli
 
 const WETHAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'; //Goerli
@@ -742,26 +746,30 @@ const uniswapRouterAddress = '0xE592427A0AEce92De3Edee1F18E0157C05861564'; //Goe
 const uniswapRouterABI = 
     [{"inputs":[{"internalType":"address","name":"_factory","type":"address"},{"internalType":"address","name":"_WETH9","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"WETH9","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"components":[{"internalType":"bytes","name":"path","type":"bytes"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMinimum","type":"uint256"}],"internalType":"struct ISwapRouter.ExactInputParams","name":"params","type":"tuple"}],"name":"exactInput","outputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"components":[{"internalType":"address","name":"tokenIn","type":"address"},{"internalType":"address","name":"tokenOut","type":"address"},{"internalType":"uint24","name":"fee","type":"uint24"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMinimum","type":"uint256"},{"internalType":"uint160","name":"sqrtPriceLimitX96","type":"uint160"}],"internalType":"struct ISwapRouter.ExactInputSingleParams","name":"params","type":"tuple"}],"name":"exactInputSingle","outputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"components":[{"internalType":"bytes","name":"path","type":"bytes"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMaximum","type":"uint256"}],"internalType":"struct ISwapRouter.ExactOutputParams","name":"params","type":"tuple"}],"name":"exactOutput","outputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"components":[{"internalType":"address","name":"tokenIn","type":"address"},{"internalType":"address","name":"tokenOut","type":"address"},{"internalType":"uint24","name":"fee","type":"uint24"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMaximum","type":"uint256"},{"internalType":"uint160","name":"sqrtPriceLimitX96","type":"uint160"}],"internalType":"struct ISwapRouter.ExactOutputSingleParams","name":"params","type":"tuple"}],"name":"exactOutputSingle","outputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes[]","name":"data","type":"bytes[]"}],"name":"multicall","outputs":[{"internalType":"bytes[]","name":"results","type":"bytes[]"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"refundETH","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"selfPermit","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"nonce","type":"uint256"},{"internalType":"uint256","name":"expiry","type":"uint256"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"selfPermitAllowed","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"nonce","type":"uint256"},{"internalType":"uint256","name":"expiry","type":"uint256"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"selfPermitAllowedIfNecessary","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"selfPermitIfNecessary","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amountMinimum","type":"uint256"},{"internalType":"address","name":"recipient","type":"address"}],"name":"sweepToken","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amountMinimum","type":"uint256"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"feeBips","type":"uint256"},{"internalType":"address","name":"feeRecipient","type":"address"}],"name":"sweepTokenWithFee","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"int256","name":"amount0Delta","type":"int256"},{"internalType":"int256","name":"amount1Delta","type":"int256"},{"internalType":"bytes","name":"_data","type":"bytes"}],"name":"uniswapV3SwapCallback","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountMinimum","type":"uint256"},{"internalType":"address","name":"recipient","type":"address"}],"name":"unwrapWETH9","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountMinimum","type":"uint256"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"feeBips","type":"uint256"},{"internalType":"address","name":"feeRecipient","type":"address"}],"name":"unwrapWETH9WithFee","outputs":[],"stateMutability":"payable","type":"function"},{"stateMutability":"payable","type":"receive"}]
 ;
-const routerContract = new web3.eth.Contract(uniswapRouterABI, uniswapRouterAddress);
-
-document.addEventListener('DOMContentLoaded', () => {
-    initWeb3();
-});
+let routerContract;
+let factoryV3Contract;
+// Quoter contract instance
+let quoterContract;
 
 async function initWeb3() {
     if (window.ethereum) {
         window.web3 = new Web3(window.ethereum);
         try {
             await window.ethereum.request({ method: 'eth_requestAccounts' });
-
             // Initialize the contract instance
             bondageFinanceContract = new web3.eth.Contract(bondageFinanceABI, bondageFinanceAddress);
+            routerContract = new web3.eth.Contract(uniswapRouterABI, uniswapRouterAddress);
+            factoryV3Contract = new web3.eth.Contract(factoryV3ABI, factoryV3Address);
+            quoterContract = new web3.eth.Contract(quoterABI, quoterAddress);
+            console.log("Web3 wallet connected.");
 
+            // Additional Web3-dependent initialization here...
         } catch (error) {
             console.error("User denied account access", error);
         }
     } else {
-        console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+        console.log('Non-Ethereum browser detected. Consider trying MetaMask!');
+        // Initialize with limited functionality or notify the user
     }
 }
 
@@ -901,8 +909,6 @@ document.getElementById('priceMultiple2').addEventListener('click', () => setPri
 document.getElementById('priceMultiple3').addEventListener('click', () => setPriceMultiple(10));
 
 
-const factoryV3Contract = new web3.eth.Contract(factoryV3ABI, factoryV3Address);
-
 // Relevant part of the Quoter ABI
 const quoterABI = [
   {
@@ -922,9 +928,6 @@ const quoterABI = [
 
 // Quoter contract address
 const quoterAddress = "0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6";
-
-// Quoter contract instance
-const quoterContract = new web3.eth.Contract(quoterABI, quoterAddress);
 
 async function fetchTokenPrice(tokenAddress) {
     const tokenIn = tokenAddress; // Your token address
@@ -1419,20 +1422,7 @@ document.getElementById('proposalPriceInput').addEventListener('blur', function(
     });
 });
 
-
 document.getElementById('darkModeToggle').addEventListener('click', function() {
-    document.body.classList.toggle('dark-mode');
-    const mascotImage = document.querySelector('img[alt="Bondage Mascot"]');
-    if (mascotImage.src.includes('bondageMascotDark.png')) {
-        mascotImage.src = 'bondageMascot2.png'; 
-        this.src = 'sun-icon.png';
-    } else {
-        mascotImage.src = 'bondageMascotDark.png';
-        this.src = 'moon-icon.png';
-    }
-});
-
-document.getElementById('darkModeToggle').addEventListener('touch', function() {
     document.body.classList.toggle('dark-mode');
     const mascotImage = document.querySelector('img[alt="Bondage Mascot"]');
     if (mascotImage.src.includes('bondageMascotDark.png')) {
@@ -1511,20 +1501,27 @@ document.getElementById('depositAmount').addEventListener('input', async functio
 });
 
 async function updatePageData() {
-    const tokenAddress = document.getElementById('tokenAddressInput').value.trim();
+    // Check if the user has connected their wallet
+    const accounts = await web3.eth.getAccounts();
+    if (accounts.length === 0) {
+        console.log("No connected wallet detected.");
+        return; // Exit the function if no wallet is connected
+    }
 
+    const tokenAddress = document.getElementById('tokenAddressInput').value.trim();
     if (!web3.utils.isAddress(tokenAddress)) {
         return; // Exit if the token address is not valid
     }
 
     try {
-        const userAddress = (await web3.eth.getAccounts())[0];
+        const userAddress = accounts[0];
         const tokenContract = new web3.eth.Contract(bTokenABI, tokenAddress);
 
         // Update User Approved Amount
         const approvedAmount = await tokenContract.methods.allowance(userAddress, bondageFinanceContract._address).call();
+        const tokenDecimals = await tokenContract.methods.decimals().call(); // Ensure tokenDecimals is fetched
         const formattedApprovedAmount = new web3.utils.BN(approvedAmount).div(new web3.utils.BN(10).pow(new web3.utils.BN(tokenDecimals))).toString();
-        document.getElementById('approvedAmount').innerText = `Approved Amount: ${web3.utils.fromWei(formattedApprovedAmount, 'ether')}`;
+        document.getElementById('approvedAmount').innerText = `Approved Amount: ${formattedApprovedAmount}`;
 
         // Update Pool Information
         const pool = await bondageFinanceContract.methods.pools(tokenAddress).call();
@@ -1544,6 +1541,7 @@ async function updatePageData() {
         console.error('Error updating page data:', error);
     }
 }
+
 
 // Periodically call the update function
 setInterval(updatePageData, 5000); // Update every 5 seconds
